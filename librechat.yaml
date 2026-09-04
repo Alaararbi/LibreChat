@@ -180,96 +180,295 @@ actions:
 # Definition of custom endpoints
 endpoints:
   custom:
-    # Anthropic-compatible Example (native `/v1/messages` API)
-    - name: 'Claude-Compatible'
-      provider: 'anthropic'
-      apiKey: '${ANTHROPIC_API_KEY}'
-      baseURL: 'https://api.anthropic.com'
-      headers:
-        anthropic-version: '2023-06-01'
-      models:
-        default:
-          - 'claude-sonnet-4-5'
-          - 'claude-opus-4-5'
-        fetch: false
-      titleConvo: true
-      titleModel: 'claude-sonnet-4-5'
-      activityLabel: true
-      activityModel: 'claude-3-5-haiku'
-      modelDisplayLabel: 'Claude (Compatible)'
-
-    # Groq Example (محدّث بنماذج حالية فعليًا تعمل)
-    - name: 'groq'
-      apiKey: '${GROQ_API_KEY}'
-      baseURL: 'https://api.groq.com/openai/v1/'
-      models:
-        default:
-          - 'llama-3.3-70b-versatile'
-          - 'llama-3.1-8b-instant'
-          - 'openai/gpt-oss-120b'
-          - 'openai/gpt-oss-20b'
-        fetch: true
-      titleConvo: true
-      titleModel: 'llama-3.1-8b-instant'
-      modelDisplayLabel: 'groq'
-
-    # Mistral AI Example
-    - name: 'Mistral'
-      apiKey: '${MISTRAL_API_KEY}'
-      baseURL: 'https://api.mistral.ai/v1'
-      models:
-        default: ['mistral-tiny', 'mistral-small', 'mistral-medium']
-        fetch: true
-      titleConvo: true
-      titleModel: 'mistral-tiny'
-      modelDisplayLabel: 'Mistral'
-      dropParams: ['stop', 'user', 'frequency_penalty', 'presence_penalty']
-
-    # OpenRouter Example (معدّل: مفتاح يُدخل من الواجهة مباشرة)
+    # OpenRouter
     - name: 'OpenRouter'
       apiKey: 'user_provided'
       baseURL: 'https://openrouter.ai/api/v1'
-      headers:
-        x-librechat-body-parentmessageid: '{{LIBRECHAT_BODY_PARENTMESSAGEID}}'
       models:
         default: ['openrouter/free']
         fetch: true
       titleConvo: true
-      titleModel: 'openrouter/free'
-      dropParams: ['stop']
       modelDisplayLabel: 'OpenRouter'
 
-    # Helicone Example
-    - name: 'Helicone'
-      apiKey: '${HELICONE_KEY}'
-      baseURL: 'https://ai-gateway.helicone.ai'
+    # Claude / Anthropic
+    - name: 'Claude-Compatible'
+      provider: 'anthropic'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.anthropic.com'
       headers:
-        x-librechat-body-parentmessageid: '{{LIBRECHAT_BODY_PARENTMESSAGEID}}'
+        anthropic-version: '2023-06-01'
       models:
-        default:
-          ['gpt-4o-mini', 'claude-4.5-sonnet', 'llama-3.1-8b-instruct', 'gemini-2.5-flash-lite']
-        fetch: true
+        default: ['claude-sonnet-4-5', 'claude-opus-4-5']
+        fetch: false
       titleConvo: true
-      titleModel: 'gpt-4o-mini'
-      modelDisplayLabel: 'Helicone'
-      iconURL: https://marketing-assets-helicone.s3.us-west-2.amazonaws.com/helicone.png
+      titleModel: 'claude-sonnet-4-5'
+      modelDisplayLabel: 'Claude'
 
-    # Portkey AI Example
-    - name: 'Portkey'
-      apiKey: 'dummy'
-      baseURL: 'https://api.portkey.ai/v1'
-      headers:
-        x-portkey-api-key: '${PORTKEY_API_KEY}'
-        x-portkey-virtual-key: '${PORTKEY_OPENAI_VIRTUAL_KEY}'
+    # Groq
+    - name: 'groq'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.groq.com/openai/v1/'
       models:
-        default: ['gpt-4o-mini', 'gpt-4o', 'chatgpt-4o-latest']
+        default: ['llama-3.3-70b-versatile', 'openai/gpt-oss-120b']
         fetch: true
       titleConvo: true
-      titleModel: 'current_model'
-      summarize: false
-      summaryModel: 'current_model'
-      modelDisplayLabel: 'Portkey'
-      iconURL: https://images.crunchbase.com/image/upload/c_pad,f_auto,q_auto:eco,dpr_1/rjqy7ghvjoiu4cd1xjbf
+      modelDisplayLabel: 'Groq'
+
+    # Mistral
+    - name: 'Mistral'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.mistral.ai/v1'
+      models:
+        default: ['mistral-small-latest', 'mistral-medium-latest']
+        fetch: true
+      titleConvo: true
+      dropParams: ['stop', 'user', 'frequency_penalty', 'presence_penalty']
+      modelDisplayLabel: 'Mistral'
+
+    # OpenAI (مباشر)
+    - name: 'OpenAI-Direct'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.openai.com/v1'
+      models:
+        default: ['gpt-4o', 'gpt-4o-mini']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'OpenAI'
+
+    # Google Gemini
+    - name: 'Gemini'
+      apiKey: 'user_provided'
+      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai'
+      models:
+        default: ['gemini-2.0-flash', 'gemini-1.5-pro']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: 'Gemini'
+
+    # Together AI
+    - name: 'Together'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.together.xyz/v1'
+      models:
+        default: ['meta-llama/Llama-3.3-70B-Instruct-Turbo']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Together AI'
+
+    # DeepSeek
+    - name: 'DeepSeek'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.deepseek.com/v1'
+      models:
+        default: ['deepseek-chat', 'deepseek-reasoner']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: 'DeepSeek'
+
+    # Perplexity
+    - name: 'Perplexity'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.perplexity.ai'
+      models:
+        default: ['sonar', 'sonar-pro']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: 'Perplexity'
+
+    # Cohere
+    - name: 'Cohere'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.cohere.ai/compatibility/v1'
+      models:
+        default: ['command-r-plus', 'command-r']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: 'Cohere'
+
+    # Fireworks AI
+    - name: 'Fireworks'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.fireworks.ai/inference/v1'
+      models:
+        default: ['accounts/fireworks/models/llama-v3p3-70b-instruct']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Fireworks AI'
+
+    # DeepInfra
+    - name: 'DeepInfra'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.deepinfra.com/v1/openai'
+      models:
+        default: ['meta-llama/Llama-3.3-70B-Instruct']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'DeepInfra'
+
+    # Cerebras
+    - name: 'Cerebras'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.cerebras.ai/v1'
+      models:
+        default: ['llama-3.3-70b']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Cerebras'
+
+    # SambaNova
+    - name: 'SambaNova'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.sambanova.ai/v1'
+      models:
+        default: ['Meta-Llama-3.3-70B-Instruct']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: 'SambaNova'
+
+    # xAI (Grok)
+    - name: 'xAI-Grok'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.x.ai/v1'
+      models:
+        default: ['grok-2-latest']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Grok (xAI)'
+
+    # AI21 (Jamba)
+    - name: 'AI21'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.ai21.com/studio/v1'
+      models:
+        default: ['jamba-large']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: 'AI21 Jamba'
+
+    # NVIDIA NIM
+    - name: 'NVIDIA-NIM'
+      apiKey: 'user_provided'
+      baseURL: 'https://integrate.api.nvidia.com/v1'
+      models:
+        default: ['nvidia/nemotron-3-super-120b-a12b']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'NVIDIA NIM'
+
+    # Novita AI
+    - name: 'Novita'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.novita.ai/v3/openai'
+      models:
+        default: ['meta-llama/llama-3.3-70b-instruct']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Novita AI'
+
+    # Hyperbolic
+    - name: 'Hyperbolic'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.hyperbolic.xyz/v1'
+      models:
+        default: ['meta-llama/Llama-3.3-70B-Instruct']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Hyperbolic'
+
+    # Lambda Labs
+    - name: 'Lambda'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.lambdalabs.com/v1'
+      models:
+        default: ['llama3.3-70b-instruct-fp8']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Lambda Labs'
+
+    # Moonshot AI (Kimi)
+    - name: 'Moonshot-Kimi'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.moonshot.ai/v1'
+      models:
+        default: ['kimi-k2-0905-preview']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Moonshot Kimi'
+
+    # Zhipu AI (GLM)
+    - name: 'Zhipu-GLM'
+      apiKey: 'user_provided'
+      baseURL: 'https://open.bigmodel.cn/api/paas/v4'
+      models:
+        default: ['glm-4-plus']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: 'Zhipu GLM'
+
+    # 01.AI (Yi)
+    - name: 'Yi-01AI'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.01.ai/v1'
+      models:
+        default: ['yi-large']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: '01.AI Yi'
+
+    # Anyscale
+    - name: 'Anyscale'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.endpoints.anyscale.com/v1'
+      models:
+        default: ['meta-llama/Llama-3-70b-chat-hf']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Anyscale'
+
+    # Scaleway AI
+    - name: 'Scaleway'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.scaleway.ai/v1'
+      models:
+        default: ['llama-3.3-70b-instruct']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Scaleway AI'
+
+    # Nebius AI
+    - name: 'Nebius'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.studio.nebius.ai/v1'
+      models:
+        default: ['meta-llama/Llama-3.3-70B-Instruct']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Nebius AI'
+
+    # Writer
+    - name: 'Writer'
+      apiKey: 'user_provided'
+      baseURL: 'https://api.writer.com/v1'
+      models:
+        default: ['palmyra-x-004']
+        fetch: false
+      titleConvo: true
+      modelDisplayLabel: 'Writer'
+
+    # Helicone (Gateway)
+    - name: 'Helicone'
+      apiKey: 'user_provided'
+      baseURL: 'https://ai-gateway.helicone.ai'
+      models:
+        default: ['gpt-4o-mini']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Helicone'
+
+    # ⚠️ الثلاثة التالية تحتاج تحقق إضافي لاحقًا (بنية API مختلفة عن المعيار):
+    # Replicate — لا يستخدم /chat/completions القياسي، يحتاج تكامل خاص
+    # OctoAI — الخدمة أُغلقت/اندمجت مع NVIDIA في 2025، على الأغلب غير نشطة
+    # Baseten — كل نموذج له رابط منفصل خاص به، لا يوجد baseURL موحّد
 
 # Memory configuration for user memories (مُفعّلة الآن)
 memory:
