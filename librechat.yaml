@@ -23,6 +23,7 @@ fileStrategy: "s3"
 # Custom interface configuration
 interface:
   customWelcome: 'Welcome to LibreChat! Enjoy your experience.'
+  contextCost: true
   fileSearch: true
   privacyPolicy:
     externalUrl: 'https://librechat.ai/privacy-policy'
