@@ -426,3 +426,20 @@ memory:
       احذف أي معلومة تصبح قديمة أو متجاوزة عندما يذكر المستخدم تحديثًا لها صراحة.
     model_parameters:
       temperature: 0.2
+
+# البحث في الويب - مجاني بالكامل، بلا مفتاح API
+webSearch:
+  searchProvider: keenable
+  scraperProvider: keenable
+  rerankerType: none
+  keenableSearchOptions:
+    maxResults: 5
+
+# تتبع استهلاك النماذج
+balance:
+  enabled: true
+  startBalance: 1000000
+  autoRefillEnabled: true
+  refillIntervalValue: 1
+  refillIntervalUnit: 'days'
+  refillAmount: 1000000
