@@ -473,11 +473,15 @@ endpoints:
 # Memory configuration for user memories (مُفعّلة الآن)
 memory:
   disabled: false
-  validKeys: ['preferences', 'work_info', 'personal_info', 'skills', 'interests', 'context']
-  tokenLimit: 10000
-  maxInputTokens: 12000
+  validKeys: ['preferences', 'work_info', 'personal_info', 'skills', 'interests', 'context', 'project_details', 'technical_stack', 'coding_preferences', 'business_goals']
+  tokenLimit: 50000
+  maxInputTokens: 20000
   personalize: true
   agent:
     enabled: true
     provider: 'OpenRouter'
-    model: 'openrouter/free'
+    model: 'nvidia/nemotron-3-super-120b-a12b:free'
+    instructions: >
+      ركّز على حفظ: معلومات مشروع المستخدم التقنية (أسماء الخدمات، القرارات المعمارية، التقنيات المستخدمة)،
+      تفضيلاته في أسلوب الشرح والتواصل، أهدافه طويلة المدى، والقرارات المهمة التي اتخذها بخصوص مشاريعه.
+      تجاهل التفاصيل العابرة أو المؤقتة التي لن تكون مفيدة لاحقًا.
