@@ -12,85 +12,13 @@ cache: true
 # place a plaintext langfuse.secretKey in this file. Environment-managed central
 # credentials and optional fanout routing are documented in .env.example.
 #
-# Self-hosted Langfuse behind an authenticating proxy or gateway can be given
-# custom request headers. They are sent on every outbound Langfuse request —
-# trace and media export, feedback scores, and credential verification.
-# Values support ${ENV_VAR} interpolation; a header whose variable is unset is
-# dropped with a warning rather than sent as a literal placeholder.
-#
-# These are deployment-level: trace export batches spans from every user through
-# a single exporter, so unlike endpoints.custom headers they cannot carry
-# per-user placeholders such as {{LIBRECHAT_USER_ID}}.
-#
-# Values are masked in admin config reads and in the startup config log, but
-# prefer ${ENV_VAR} references over literal credentials here regardless.
-#
-# Scope: these are sent only when the deployment configures exactly ONE Langfuse
-# origin (a self-hosted base URL, or a single tenant destination URL), and only
-# to that origin. The map has no way to say which endpoint it authenticates to,
-# so a deployment configuring several origins — e.g. a fanout collector plus a
-# separate central host — gets a warning and no headers, rather than having a
-# gateway credential sent somewhere it was not meant for.
-#
-# Fanout deployments additionally need collector support: the gateway forwards
-# only Authorization upstream, so a tenant Langfuse behind its own proxy is not
-# covered even when the collector receives these.
-#
 # langfuse:
 #   headers:
 #     CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
 #     CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
 
 # File storage configuration
-# Single strategy for all file types (legacy format, still supported)
 fileStrategy: "s3"
-
-# Granular file storage strategies (new format - recommended)
-# Allows different storage strategies for different file types
-# fileStrategy:
-#   avatar: "s3"        # Storage for user/agent avatar images
-#   image: "firebase"   # Storage for uploaded images in chats
-#   document: "local"   # Storage for document uploads (PDFs, text files, etc.)
-
-# Available strategies: "local", "s3", "firebase", "azure_blob", "cloudfront"
-# If not specified, defaults to "local" for all file types
-# You can mix and match strategies based on your needs:
-# - Use S3 for avatars for fast global access
-# - Use Firebase for images with automatic optimization
-# - Use local storage for documents for privacy/compliance
-# - Use CloudFront for CDN-accelerated delivery (requires S3 + cloudfront config below)
-
-# CloudFront CDN Configuration (optional)
-# Use when fileStrategy: "cloudfront" or fileStrategies includes cloudfront
-# Requires: AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME
-# For signed cookies and direct download URLs: CLOUDFRONT_KEY_PAIR_ID, CLOUDFRONT_PRIVATE_KEY
-# cloudfront:
-#   domain: "https://cdn.example.com"       # CloudFront domain (CNAME recommended for cookies)
-#   distributionId: "E1234ABCD"             # Required if invalidateOnDelete is true
-#   invalidateOnDelete: false               # Create cache invalidation on file delete
-#   imageSigning: "none"                    # "none" (public) | "cookies" (signed cookies)
-#   cookieDomain: ".example.com"            # Required for "cookies" - shared parent domain
-#   cookieExpiry: 1800                      # Cookie lifetime in seconds (max: 604800 / 7 days, default: 1800 / 30 min)
-#   urlExpiry: 3600                         # Signed CloudFront download URL lifetime in seconds
-#   storageRegion: "us-east-2"
-#   includeRegionInPath: false
-
-# Skill sync configuration (optional)
-# skillSync:
-#   github:
-#     enabled: false
-#     intervalMinutes: 60
-#     runOnStartup: true
-#     sources:
-#       - id: librechat-skills
-#         owner: your-org
-#         repo: your-skills-repo
-#         ref: main
-#         paths:
-#           - skills
-#         skillDiscoveryDepth: 2
-#         token: '${GITHUB_SKILLS_TOKEN}'
-#         # tenantId: your-tenant-id
 
 # Custom interface configuration
 interface:
@@ -157,6 +85,12 @@ interface:
     create: true
     share: false
     public: false
+  # Scheduled chats: مفعّلة الآن (كانت معطّلة افتراضيًا)
+  schedules:
+    use: true
+    create: true
+    maxPerUser: 5
+    minIntervalMinutes: 1440
   peoplePicker:
     users: true
     groups: true
@@ -475,13 +409,20 @@ memory:
   disabled: false
   validKeys: ['preferences', 'work_info', 'personal_info', 'skills', 'interests', 'context', 'project_details', 'technical_stack', 'coding_preferences', 'business_goals']
   tokenLimit: 50000
+  charLimit: 15000
   maxInputTokens: 20000
   personalize: true
+  messageWindowSize: 10
   agent:
     enabled: true
     provider: 'OpenRouter'
     model: 'nvidia/nemotron-3-super-120b-a12b:free'
     instructions: >
-      ركّز على حفظ: معلومات مشروع المستخدم التقنية (أسماء الخدمات، القرارات المعمارية، التقنيات المستخدمة)،
-      تفضيلاته في أسلوب الشرح والتواصل، أهدافه طويلة المدى، والقرارات المهمة التي اتخذها بخصوص مشاريعه.
-      تجاهل التفاصيل العابرة أو المؤقتة التي لن تكون مفيدة لاحقًا.
+      لكل فئة، اتبع هذي القاعدة الدقيقة:
+      - project_details: احفظ اسم المشروع، بنيته التقنية، القرارات المعمارية المتخذة.
+      - technical_stack: احفظ كل تقنية/خدمة يذكرها المستخدم يستخدمها فعليًا (Render, MongoDB, إلخ).
+      - coding_preferences: احفظ أسلوبه المفضل (شرح مفصل، خطوة بخطوة، بدون تعقيد).
+      - business_goals: احفظ أي هدف طويل المدى يذكره (دخل، مشاريع مستقبلية).
+      احذف أي معلومة تصبح قديمة أو متجاوزة عندما يذكر المستخدم تحديثًا لها صراحة.
+    model_parameters:
+      temperature: 0.2
