@@ -25,6 +25,8 @@ interface:
   customWelcome: 'Welcome to LibreChat! Enjoy your experience.'
   contextCost: true
   fileSearch: true
+  # يمنع تثبيت أي أداة افتراضيًا (يحل مشكلة MCP المثبّتة تلقائيًا بلا خادم)
+  defaultPinnedTools: []
   privacyPolicy:
     externalUrl: 'https://librechat.ai/privacy-policy'
     openNewTab: true
