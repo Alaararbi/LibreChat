@@ -90,7 +90,7 @@ interface:
     use: true
     create: true
     maxPerUser: 10
-    minIntervalMinutes: 1380
+    minIntervalMinutes: 0
   peoplePicker:
     users: true
     groups: true
