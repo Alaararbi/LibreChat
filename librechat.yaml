@@ -89,8 +89,8 @@ interface:
   schedules:
     use: true
     create: true
-    maxPerUser: 5
-    minIntervalMinutes: 1440
+    maxPerUser: 10
+    minIntervalMinutes: 1380
   peoplePicker:
     users: true
     groups: true
