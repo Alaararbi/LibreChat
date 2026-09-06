@@ -172,15 +172,15 @@ endpoints:
       titleConvo: true
       modelDisplayLabel: 'OpenAI'
 
-# Google AI Studio / Gemini
-- name: 'Google AI Studio'
-  apiKey: 'user_provided'
-  baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai'
-  models:
-    default: ['gemini-3.8-flash']
-    fetch: true
-  titleConvo: true
-  modelDisplayLabel: 'Google AI Studio'
+    # Google AI Studio / Gemini
+    - name: 'Google AI Studio'
+      apiKey: 'user_provided'
+      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai'
+      models:
+        default: ['gemini-3.8-flash']
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: 'Google AI Studio'
 
     # Together AI
     - name: 'Together'
