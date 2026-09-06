@@ -417,7 +417,7 @@ memory:
   personalize: true
   messageWindowSize: 10
   agent:
-    enabled: true
+    enabled: false
     provider: 'OpenRouter'
     model: 'nvidia/nemotron-3-super-120b-a12b:free'
     instructions: >
