@@ -335,9 +335,9 @@ endpoints:
     # Zhipu AI (GLM)
     - name: 'Zhipu-GLM'
       apiKey: 'user_provided'
-      baseURL: 'https://open.bigmodel.cn/api/paas/v4'
+      baseURL: 'https://api.tokenrouter.com/v1'
       models:
-        default: ['glm-4-plus']
+        default: ['z-ai/glm-5.3-free']
         fetch: false
       titleConvo: true
       modelDisplayLabel: 'Zhipu GLM'
