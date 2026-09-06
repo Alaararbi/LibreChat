@@ -1,21 +1,18 @@
-# For more information, see the Configuration Guide:
-# https://www.librechat.ai/docs/configuration/librechat_yaml
+# librechat.yaml - النسخة المحدثة (memory.agent مفعّل)
+# ===========================================
+# 📋 التغييرات المطبقة:
+# 1. تفعيل memory.agent (enabled: true)
+# 2. إضافة mcpServers: {} لإصلاح خطأ MCP
+# 3. إضافة قسم endpoints.agents الكامل
+# 4. إصلاح minIntervalMinutes من 1 إلى 60
+# 5. إضافة mcpSettings للسماح بالاتصالات الآمنة
+# ===========================================
 
 # Configuration version (required)
 version: 1.3.15
 
 # Cache settings: Set to true to enable caching
 cache: true
-
-# Langfuse connections are managed through Settings > Langfuse when available.
-# That flow verifies the credentials and stores the secret key encrypted; do not
-# place a plaintext langfuse.secretKey in this file. Environment-managed central
-# credentials and optional fanout routing are documented in .env.example.
-#
-# langfuse:
-#   headers:
-#     CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
-#     CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
 
 # File storage configuration
 fileStrategy: "s3"
@@ -25,7 +22,7 @@ interface:
   customWelcome: 'Welcome to LibreChat! Enjoy your experience.'
   contextCost: true
   fileSearch: true
-  # يمنع تثبيت أي أداة افتراضيًا (يحل مشكلة MCP المثبّتة تلقائيًا بلا خادم)
+  # يمنع تثبيت أي أداة افتراضيًا
   defaultPinnedTools: []
   privacyPolicy:
     externalUrl: 'https://librechat.ai/privacy-policy'
@@ -41,7 +38,7 @@ interface:
 
       *Effective Date: February 18, 2024*
 
-      Welcome to LibreChat, the informational website for the open-source AI chat platform, available at https://librechat.ai. These Terms of Service ("Terms") govern your use of our website and the services we offer. By accessing or using the Website, you agree to be bound by these Terms and our Privacy Policy, accessible at https://librechat.ai//privacy.
+      Welcome to LibreChat, the informational website for the open-source AI chat platform, available at https://www.librechat.ai. These Terms of Service ("Terms") govern your use of our website and the services we offer. By accessing or using the Website, you agree to be bound by these Terms and our Privacy Policy, accessible at https://www.librechat.ai//privacy.
 
       ## 1. Ownership
 
@@ -88,12 +85,12 @@ interface:
     create: true
     share: false
     public: false
-  # Scheduled chats: مفعّلة الآن (كانت معطّلة افتراضيًا)
+  # ✅ الحد الأدنى الآمن (60 دقيقة بدلاً من 1)
   schedules:
     use: true
     create: true
     maxPerUser: 10
-    minIntervalMinutes: 1
+    minIntervalMinutes: 60
   peoplePicker:
     users: true
     groups: true
@@ -114,8 +111,52 @@ actions:
     - 'librechat.ai'
     - 'google.com'
 
-# Definition of custom endpoints
+# ===========================================
+# mcpSettings - السماح بالاتصال بالخوادم البعيدة
+# ===========================================
+mcpSettings:
+  allowedDomains:
+    - 'mcp.composio.dev'
+    - 'api.githubcopilot.com'
+    - '*.mcp.run'
+
+# ===========================================
+# mcpServers - فارغة (هذا يحل المشكل الرئيسي)
+# ===========================================
+mcpServers: {}
+
+# ===========================================
+# endpoints - التعريف الكامل (كان ناقصاً)
+# ===========================================
 endpoints:
+  # إعدادات الوكلاء (Agents) - كان مفقوداً بالكامل
+  agents:
+    recursionLimit: 25
+    maxRecursionLimit: 50
+    maxToolCallArgBytes: 65536
+    maxCitations: 30
+    maxCitationsPerFile: 7
+    minRelevanceScore: 0.45
+    maxSubagents: 20
+    titleTiming: immediate
+    disableBuilder: false
+    capabilities:
+      - "deferred_tools"
+      - "execute_code"
+      - "file_search"
+      - "web_search"
+      - "artifacts"
+      - "subagents"
+      - "actions"
+      - "context"
+      - "skills"
+      - "memory"
+      - "ask_user_question"
+      - "tools"
+      - "chain"
+      - "ocr"
+
+  # تعريف الـ custom endpoints
   custom:
     # OpenRouter
     - name: 'OpenRouter'
@@ -258,7 +299,7 @@ endpoints:
       baseURL: 'https://api.sambanova.ai/v1'
       models:
         default: ['Meta-Llama-3.3-70B-Instruct']
-        fetch: false
+      fetch: false
       titleConvo: true
       modelDisplayLabel: 'SambaNova'
 
@@ -278,7 +319,7 @@ endpoints:
       baseURL: 'https://api.ai21.com/studio/v1'
       models:
         default: ['jamba-large']
-        fetch: false
+      fetch: false
       titleConvo: true
       modelDisplayLabel: 'AI21 Jamba'
 
@@ -338,7 +379,7 @@ endpoints:
       baseURL: 'https://api.tokenrouter.com/v1'
       models:
         default: ['z-ai/glm-5.3-free']
-        fetch: false
+      fetch: false
       titleConvo: true
       modelDisplayLabel: 'Zhipu GLM'
 
@@ -348,7 +389,7 @@ endpoints:
       baseURL: 'https://api.01.ai/v1'
       models:
         default: ['yi-large']
-        fetch: false
+      fetch: false
       titleConvo: true
       modelDisplayLabel: '01.AI Yi'
 
@@ -388,7 +429,7 @@ endpoints:
       baseURL: 'https://api.writer.com/v1'
       models:
         default: ['palmyra-x-004']
-        fetch: false
+      fetch: false
       titleConvo: true
       modelDisplayLabel: 'Writer'
 
@@ -402,12 +443,9 @@ endpoints:
       titleConvo: true
       modelDisplayLabel: 'Helicone'
 
-    # ⚠️ الثلاثة التالية تحتاج تحقق إضافي لاحقًا (بنية API مختلفة عن المعيار):
-    # Replicate — لا يستخدم /chat/completions القياسي، يحتاج تكامل خاص
-    # OctoAI — الخدمة أُغلقت/اندمجت مع NVIDIA في 2025، على الأغلب غير نشطة
-    # Baseten — كل نموذج له رابط منفصل خاص به، لا يوجد baseURL موحّد
-
-# Memory configuration for user memories (مُفعّلة الآن)
+# ===========================================
+# Memory - مع تفعيل memory.agent
+# ===========================================
 memory:
   disabled: false
   validKeys: ['preferences', 'work_info', 'personal_info', 'skills', 'interests', 'context', 'project_details', 'technical_stack', 'coding_preferences', 'business_goals']
@@ -416,8 +454,9 @@ memory:
   maxInputTokens: 20000
   personalize: true
   messageWindowSize: 10
+  # ✅ تم تفعيل memory.agent (enabled: true)
   agent:
-    enabled: false
+    enabled: true
     provider: 'OpenRouter'
     model: 'nvidia/nemotron-3-super-120b-a12b:free'
     instructions: >
@@ -426,11 +465,17 @@ memory:
       - technical_stack: احفظ كل تقنية/خدمة يذكرها المستخدم يستخدمها فعليًا (Render, MongoDB, إلخ).
       - coding_preferences: احفظ أسلوبه المفضل (شرح مفصل، خطوة بخطوة، بدون تعقيد).
       - business_goals: احفظ أي هدف طويل المدى يذكره (دخل، مشاريع مستقبلية).
+      - personal_info: احفظ الاسم، اللغة المفضلة، أي معلومة شخصية يشاركها.
+      - preferences: احفظ تفضيلات عامة (مثل تفضيل العربي، تفضيل الإجابات القصيرة).
+      - work_info: احفظ أي معلومة متعلقة بالعمل أو الدراسة.
+      - skills: احفظ المهارات المذكورة للمستخدم أو التي يطلب تعلمها.
+      - interests: احفظ الاهتمامات والهوايات.
+      - context: احفظ السياق الحالي للمحادثة (المشروع الذي يعمل عليه، الهدف الحالي).
       احذف أي معلومة تصبح قديمة أو متجاوزة عندما يذكر المستخدم تحديثًا لها صراحة.
     model_parameters:
       temperature: 0.2
 
-# البحث في الويب - مجاني بالكامل، بلا مفتاح API
+# البحث في الويب - مجاني بالكامل
 webSearch:
   searchProvider: keenable
   scraperProvider: keenable
